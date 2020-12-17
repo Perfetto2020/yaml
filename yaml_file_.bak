@@ -18,149 +18,241 @@ environment:
   sdk: ">=2.6.0"
 
 dependencies:
-(null)(null)  flutter:
+  flutter:
+    sdk: flutter
+
+  ################################################
+  ###               Private plugins            ###
   ################################################
   anti_fraud:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   card_ocr:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   contact_plugin:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   flutter_file_picker:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   flutter_layout:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   flutter_plugin_pdf_viewer:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   flutter_router:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   flutter_take_picture:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   flutter_widgets:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   local_auth:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   memory_info:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   mi_verification:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   native_screenshot:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   security_plugin:
+    path: security_plugin
 
   share:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   sms_auto_fill:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   tu_plugin:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
+  # A Flutter plugin to access advertising ID.
   advertising_id: ^1.0.0
+
   # A Flutter plugin for AppsFlyer SDK.
   appsflyer_sdk: ^5.2.0+1
+
+  # Discover network connectivity and configure themselves accordingly.
+  # It can distinguish between cellular vs WiFi connection.
   # Works for iOS and Android.
   connectivity: ^0.4.5+3
+
   # Contact list
   contacts_service: ^0.4.6
+
+  # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+
   # Provides various constants to build Date format string
   date_format: ^1.0.6
+
   # The decimal package allows you to deal with decimal numbers without loosing precision.
   decimal: ^0.3.5
+
   # about the device (make, model, etc.), and Android or iOS version
   device_info: ^0.4.0+2
+
   # A cookie manager for Dio.
   dio_cookie_manager: ^1.0.0
+
   # A flutter list view which can drag & move item to change order.
   draggable_flutter_list: ^1.0.3
+
   # A set of high-level APIs over PointyCastle for two-way cryptography.
   encrypt: ^4.0.2
+
   # Dart module to decode Exif data from tiff and jpeg files.
   exif: ^1.0.2
+
   # A Flutter plugin to use the Firebase Cloud Messaging (FCM) API.
   firebase_messaging: ^7.0.3
+
   # Support animation file (.flr)
   flare_flutter: ^2.0.6
+
+  # Flutter plugin for Tencent Bugly, Crash monitoring, Crash analysis, exception reporting,
   # application update, data statistics, etc
   flutter_bugly: ^0.2.8
+
+  # A CacheManager to download and cache files in the cache directory of the app.
   # Various settings on how long to keep a file can be changed.
   flutter_cache_manager: ^1.1.3
+
   # Compresses image as native plugin (Obj-C/Kotlin)
   flutter_image_compress: ^0.6.5+1
+
   # A cross platform plugin for displaying local notifications
   flutter_local_notifications: ^1.4.1
+
   # State management
   flutter_redux: ^0.5.2
+
+  # A fast, extra light and synchronous key-value in memory,
+  # which backs up data to disk at each operation.
   # It is written entirely in Dart and easily integrates with Get framework of Flutter.
   get_storage: ^1.3.1
+
   # google_maps_webservice
   google_maps_webservice: ^0.0.16
+
   # This is a pure Dart HTML5 parser. It's a port of html5lib from Python.
   html: ^0.14.0+4
+
   # Install apk for android; and using url to go to app store for iOS.
   install_plugin: ^2.0.1
+
+  # A Flutter plugin to assist in leaving user reviews/ratings in
   # Google Play Store and Apple App Store.
   launch_review: ^2.0.0
+
   # 汉字转拼音
   lpinyin: ^1.0.9
+
   # Query info about the package, such as CFBundleVersion on iOS or versionCode on Android
   package_info: ^0.4.0+6
+
   # cross-platform (iOS, Android) API to request and check permissions
   permission_handler: ^4.2.0+hotfix.3
+
   # ReactiveX api for asynchronous programming, leveraging the native Dart Streams api
   rxdart: ^0.21.0
+
+  # 神策 sensors_analytics_flutter_plugin 插件，封装了神策 iOS & Android SDK 常用 API
   # 使用此插件，可以完成埋点的统计上报
   sensors_analytics_flutter_plugin: ^1.0.1
+
   # 调用系统分享的Flutter组件，支持分享文本、图片、视频和文件
   share_extend: ^1.0.9
+
   # Wraps NSUserDefaults on iOS and SharedPreferences on Android
   shared_preferences: ^0.5.0
+
+  # Easily create a finite state machine and define legal state transitions.
   # Listen to state entrances, departures, and transitions.
   state_machine: ^2.2.0
+
   # A full featured library for writing and running Dart tests
   test: ^1.5.3
+
   # Supports web, phone, SMS, and email schemes
   url_launcher: ^5.1.3
+
   # A plugin generate uuid
   uuid: 2.0.1
+
   # Easy regex expression generator
   verbal_expressions: ^0.4.0
+
+dependency_overrides:
+  # dio_cookie_manager依赖公共pub里的dio plugin，工程直接引用私用库的dio plugin会报错
   # 所以只能将公共pub的dio plugin override成私有库的dio plugin
   dio:
-    path: the_path_the_package
+    version: ^3.0.10+1
+    hosted:
+      name: dio
+      url: *private_pub_server
+
+dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   flutter_driver:
+    sdk: flutter
 
   analyzer: ^0.40.4
-
   build_runner: ^1.7.0
-
   json_serializable: ^3.2.2
-
   source_gen: ^0.9.4+6
-
   flutter_gen: ^1.3.1
 
   flutter_api_generator:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   flutter_i18n:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
   flutter_redux_generator:
-    path: the_path_the_package
+    path: the_path_to_the_package
+
+flutter_icons:
   android: "launcher_icon"
-    path: the_path_the_package
   ios: true
-    path: the_path_the_package
   image_path: "assets/ic_launcher.png"
+
 flutter_gen:
   output: lib/generated/
-flutter_gen:
   lineLength: 100
+
 flutter:
   uses-material-design: true
 
   assets:
+    - assets/
+    - assets/mock/
+    - assets/splash_icon_frames/
+    - assets/cloud_icon/
+    - assets/animation/
+    - assets/forex/
 
+  fonts:
+    - family: minumber
+      fonts:
+        - asset: fonts/MitypeMono-Thin.otf
+          weight: 100
+        - asset: fonts/MitypeMono-Light.otf
+          weight: 300
+        - asset: fonts/MitypeMono-Regular.otf
+          weight: 400
+        - asset: fonts/MitypeMono-DemiBold.otf
+          weight: 700
