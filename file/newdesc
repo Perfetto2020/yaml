@@ -1,0 +1,10 @@
+source file 1
+Content of source file 1
+
+--------- e file 1
+ appended ----------
+source file 2
+Content of source file 2
+
+--------- e file 2
+ appended ----------
