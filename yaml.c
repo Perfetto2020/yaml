@@ -61,17 +61,15 @@ int replace_hosted_to_pathed(const char *yaml_file_name, const char *path)
         {
             is_cur_line_in_dependency = is_cur_line_dependencies_begin(line);
         }
-        printf("%s is_cur_line_in_dependency: %s\n", line, is_cur_line_in_dependency ? "true" : "false");
-        printf("is_cur_line_other_begin: %s\n", is_cur_line_other_begin(line) ? "true" : "false");
-        printf("is_cur_line_dependencies_begin: %s\n", is_cur_line_dependencies_begin(line) ? "true" : "false");
+        //printf("%s is_cur_line_in_dependency: %s\n", line, is_cur_line_in_dependency ? "true" : "false");
+        //printf("is_cur_line_other_begin: %s\n", is_cur_line_other_begin(line) ? "true" : "false");
+        //printf("is_cur_line_dependencies_begin: %s\n", is_cur_line_dependencies_begin(line) ? "true" : "false");
 
         if (!is_cur_line_in_dependency || is_cur_line_dependencies_begin(line))
         {
-            if (is_cur_line_other_begin(line))
-            {
-                // dependencies 结束了，把最后一个 dependency 写入 dest
-                write_and_clear_dependency(dest, &cur_dependency);
-            }
+            // dependencies 结束了，把最后一个 dependency 写入 dest
+            write_and_clear_dependency(dest, &cur_dependency);
+
             fprintf(dest, "%s", line);
             continue;
         }
@@ -84,7 +82,6 @@ int replace_hosted_to_pathed(const char *yaml_file_name, const char *path)
             cur_dependency.name = calloc(sizeof(char), line_length + 1);
             memcpy(cur_dependency.name, line, line_length + 1);
             cur_dependency.valid = true;
-            
         }
         else // 处理一个 dependency 的属性：depency_detail
         {
@@ -133,7 +130,7 @@ bool prefix(const char *pre, const char *str)
 // 当前行是依赖声明的开始
 bool is_cur_line_dependencies_begin(const char *line)
 {
-    return !strcmp(line, "dependencies:\n") || !strcmp(line, "dev_dependencies:\n");
+    return !strcmp(line, "dependencies:\n") || !strcmp(line, "dev_dependencies:\n") || !strcmp(line, "dependency_overrides:\n");
 }
 
 // 当前行是其他声明的开始，例如："flutter_icons:"

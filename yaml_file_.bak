@@ -197,10 +197,7 @@ dependency_overrides:
   # dio_cookie_manager依赖公共pub里的dio plugin，工程直接引用私用库的dio plugin会报错
   # 所以只能将公共pub的dio plugin override成私有库的dio plugin
   dio:
-    version: ^3.0.10+1
-    hosted:
-      name: dio
-      url: *private_pub_server
+    path: the_path_to_the_package
 
 dev_dependencies:
   flutter_test:
