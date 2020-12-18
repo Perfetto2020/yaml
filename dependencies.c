@@ -5,6 +5,19 @@
 #include <stdbool.h>
 #include "dependencies.h"
 
+#define DEBUG true
+
+typedef struct
+{
+    char *name;
+    char *path;
+    char *version;
+} local_dependency_info;
+
+void remove_spaces(char *s);
+
+local_dependency_info *dependencies[32];
+
 #define YAML_NAME "pubspec.yaml"
 #define YAML_KEY_NAME "name:"
 #define YAML_KEY_VERSION "version:"
@@ -17,10 +30,11 @@ static char *root_packages_dir_path;
 static bool local_dependency_loaded = false;
 int dependencies_count = 0;
 void init_root_packages_dir_path(char *origin_root_path);
+void print_loaded_local_dependencies();
 
 int load_local_dependency_info(char *packages_dir_name)
 {
-    if(packages_dir_name == NULL)
+    if (packages_dir_name == NULL)
     {
         fprintf(stderr, "packages_dir_name can not be NULL");
         return -1;
@@ -97,6 +111,7 @@ int load_local_dependency_info(char *packages_dir_name)
     }
     dependencies_count = count;
     local_dependency_loaded = true;
+    print_loaded_local_dependencies();
     return dependencies_count;
 }
 
@@ -104,7 +119,7 @@ char *get_path_of_dependency(char *denpendency_name)
 {
     for (int i = 0; i < dependencies_count; i++)
     {
-        if(!strcmp(dependencies[i]->name, denpendency_name))
+        if (!strcmp(dependencies[i]->name, denpendency_name))
         {
             return dependencies[i]->path;
         }
@@ -116,9 +131,9 @@ char *get_path_of_dependency(char *denpendency_name)
 /**
  * name_line: "  card_ocr:\n"
  * */
-char *get_full_path_of_dependency(const char *name_line)
+char *full_path_of_dependency(const char *name_line)
 {
-    if(!local_dependency_loaded)
+    if (!local_dependency_loaded)
     {
         fprintf(stderr, "Please load local denpendency first!\n");
         return NULL;
@@ -129,7 +144,7 @@ char *get_full_path_of_dependency(const char *name_line)
     remove_spaces(name);
     name[strlen(name) - 2] = '\0';
     char *path = get_path_of_dependency(name);
-    if(!path)
+    if (!path)
     {
         return NULL;
     }
@@ -143,7 +158,21 @@ void init_root_packages_dir_path(char *origin_root_path)
 {
     size_t origin_length = strlen(origin_root_path);
     bool need_slash = origin_root_path[origin_length - 1] != '/';
-    asprintf(&root_packages_dir_path, "%s%s", origin_root_path, need_slash ? "/": "");
+    asprintf(&root_packages_dir_path, "%s%s", origin_root_path, need_slash ? "/" : "");
+}
+
+void print_loaded_local_dependencies()
+{
+    if (!DEBUG)
+        return;
+
+    printf("there are %d packages loaded:\n", dependencies_count);
+    local_dependency_info *info;
+    for (int i = 0; i < dependencies_count; i++)
+    {
+        info = dependencies[i];
+        printf("name: %s:\n  version: %s\n  path: %s\n", info->name, info->version, info->path);
+    }
 }
 
 void remove_spaces(char *s)
