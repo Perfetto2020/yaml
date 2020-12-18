@@ -2,8 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
-
-#define MAX_LINE_CHAR_COUNT 200
+#include "dependencies.h"
 
 typedef struct
 {
@@ -17,16 +16,30 @@ typedef struct
 int replace_hosted_to_pathed(const char *yaml_file_name, const char *path);
 bool prefix(const char *pre, const char *str);
 
+extern local_dependency_info *dependencies[];
+
 int main(int argc, char *argv[])
 {
-    replace_hosted_to_pathed("pubspec.yaml", "    path: the_path_to_the_package");
+    char *packages_dir = "/Users/wangpan/Work/Mi/mi_flutter_plugins/packages";
+    int count = load_local_dependency_info(packages_dir);
+    printf("Totoal %d packages!\n", count);
+    local_dependency_info *info;
+    for (int i = 0; i < count; i++)
+    {
+        info = dependencies[i];
+        printf("%s:\n  %s\n  %s\n", info->name, info->version, info->path);
+    }
+
+    printf("-------------- begin work -----------------\n");
+
+    replace_hosted_to_pathed("pubspec.yaml", packages_dir);
 }
 
 bool is_cur_line_dependencies_begin(const char *line);
 bool is_cur_line_other_begin(const char *line);
 void write_and_clear_dependency(FILE *file, dependency *d);
-char *path_of_dependency(const char *name_line, const char *root_path);
-int replace_hosted_to_pathed(const char *yaml_file_name, const char *path)
+
+int replace_hosted_to_pathed(const char *yaml_file_name, const char *root_path)
 {
     FILE *src;
     FILE *dest;
@@ -88,16 +101,18 @@ int replace_hosted_to_pathed(const char *yaml_file_name, const char *path)
         {
             if (cur_dependency.private)
                 continue;
-
-            // todo get and check version
-
+            
+            // todo: check version
             if (strcmp("      url: *private_pub_server\n", line) == 0)
             {
                 // found!
                 cur_dependency.private = true;
                 if (cur_dependency.properties)
                     free(cur_dependency.properties);
-                cur_dependency.properties = path_of_dependency(cur_dependency.name, path);
+                
+                char *dependency_path = get_full_path_of_dependency(cur_dependency.name);
+                asprintf(&cur_dependency.properties, "%s%s%s", "    path: ", dependency_path, "\n\n");
+                free(dependency_path);
             }
             else
             {
@@ -158,23 +173,4 @@ void write_and_clear_dependency(FILE *file, dependency *d)
     d->properties_length = 0;
     d->valid = false;
     d->private = false;
-}
-
-/**
- * 把 name_line: "  card_ocr:" 中的名字取出来，append 到 root_path 的结尾。
- * 如果 root_path 不是以 / 结尾，那么在两者之间加上一个 /
- * */
-char *path_of_dependency(const char *name_line, const char *root_path)
-{
-    // name_line: "  card_ocr:"
-    size_t name_length = strlen(name_line) - 2 - 1 - 1; // 2: 空格；1: 冒号；1: 换行
-    size_t root_path_length = strlen(root_path);
-    bool need_slash = root_path[root_path_length - 1] != '/';
-    char *ret = calloc(sizeof(char), strlen(root_path) + (need_slash ? 1 : 0) + name_length + 2 + 1); // 2: 两个换行；1: '\0'
-    memcpy(ret, root_path, root_path_length);
-    if (need_slash)
-        memcpy(ret + root_path_length, "/", 1);
-    memcpy(ret + root_path_length + (need_slash ? 1 : 0), &name_line[2], name_length);
-    memcpy(ret + root_path_length + (need_slash ? 1 : 0) + name_length, "\n\n", 2);
-    return ret;
 }

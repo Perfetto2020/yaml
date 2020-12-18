@@ -25,55 +25,55 @@ dependencies:
   ###               Private plugins            ###
   ################################################
   anti_fraud:
-    path: the_path_to_the_package/anti_fraud
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/anti_fraud
 
   card_ocr:
-    path: the_path_to_the_package/card_ocr
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/card_ocr
 
   contact_plugin:
-    path: the_path_to_the_package/contact_plugin
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/contact_plugin
 
   flutter_file_picker:
-    path: the_path_to_the_package/flutter_file_picker
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_file_picker
 
   flutter_layout:
-    path: the_path_to_the_package/flutter_layout
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_layout
 
   flutter_plugin_pdf_viewer:
-    path: the_path_to_the_package/flutter_plugin_pdf_viewer
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_plugin_pdf_viewer
 
   flutter_router:
-    path: the_path_to_the_package/flutter_router
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_router
 
   flutter_take_picture:
-    path: the_path_to_the_package/flutter_take_picture
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_take_picture
 
   flutter_widgets:
-    path: the_path_to_the_package/flutter_widgets
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_widgets
 
   local_auth:
-    path: the_path_to_the_package/local_auth
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/local_auth
 
   memory_info:
-    path: the_path_to_the_package/memory_info
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/memory_info
 
   mi_verification:
-    path: the_path_to_the_package/mi_verification
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/mi_verification
 
   native_screenshot:
-    path: the_path_to_the_package/native_screenshot
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/native_screenshot
 
   security_plugin:
     path: security_plugin
 
   share:
-    path: the_path_to_the_package/share
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/share
 
   sms_auto_fill:
-    path: the_path_to_the_package/sms_auto_fill
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/sms_auto_fill
 
   tu_plugin:
-    path: the_path_to_the_package/tu_plugin
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/tu_plugin
 
   # A Flutter plugin to access advertising ID.
   advertising_id: ^1.0.0
@@ -197,7 +197,7 @@ dependency_overrides:
   # dio_cookie_manager依赖公共pub里的dio plugin，工程直接引用私用库的dio plugin会报错
   # 所以只能将公共pub的dio plugin override成私有库的dio plugin
   dio:
-    path: the_path_to_the_package/dio
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/dio
 
 dev_dependencies:
   flutter_test:
@@ -214,13 +214,13 @@ dev_dependencies:
   flutter_gen: ^1.3.1
 
   flutter_api_generator:
-    path: the_path_to_the_package/flutter_api_generator
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_api_generator
 
   flutter_i18n:
-    path: the_path_to_the_package/flutter_i18n
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_i18n
 
   flutter_redux_generator:
-    path: the_path_to_the_package/flutter_redux_generator
+    path: /Users/wangpan/Work/Mi/mi_flutter_plugins/packages/flutter_redux_generator
 
 flutter_icons:
   android: "launcher_icon"
