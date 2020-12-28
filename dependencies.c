@@ -1,12 +1,10 @@
 #include "dependencies.h"
 #include <dirent.h>
 #include <errno.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
 
 typedef struct {
   char *name;
@@ -29,7 +27,6 @@ void remove_spaces(char *s);
 
 local_dependency_info *dependencies[32];
 
-
 /**
  * 存放 packages 的根目录: "/Users/wangpan/Work/Mi/mi_flutter_plugins/packages"
  * */
@@ -40,11 +37,11 @@ int dependencies_count = 0;
 void init_root_packages_dir_path(char *origin_root_path);
 void print_loaded_local_dependencies();
 
-int replace_all_local_hosted_to_pathed();
+int replace_all_local_hosted_to_pathed(bool restore);
 
-int load_local_dependency_info(char *packages_dir_name) {
+int load_local_dependency_info(char *packages_dir_name, bool restore) {
   if (packages_dir_name == NULL) {
-    fprintf(stderr, "packages_dir_name can not be NULL");
+    fprintf(stderr, "packages_dir_name can not be NULL\n");
     return -1;
   }
   init_root_packages_dir_path(packages_dir_name);
@@ -110,7 +107,8 @@ int load_local_dependency_info(char *packages_dir_name) {
   dependencies_count = count;
   local_dependency_loaded = true;
   print_loaded_local_dependencies();
-  replace_all_local_hosted_to_pathed(); // todo 返回值
+
+  replace_all_local_hosted_to_pathed(restore); // todo 返回值
   return dependencies_count;
 }
 
@@ -279,7 +277,7 @@ int replace_hosted_to_pathed(const char *yaml_file_name, const char *bak_file_na
   return 0;
 }
 
-int replace_all_local_hosted_to_pathed() {
+int replace_all_local_hosted_to_pathed(bool restore) {
   local_dependency_info *info;
   for (int i = 0; i < dependencies_count; i++) {
     info = dependencies[i];
@@ -287,13 +285,37 @@ int replace_all_local_hosted_to_pathed() {
     char *bak_name;
     asprintf(&pubspec_name, "%s%s/%s", root_packages_dir_path, info->path, YAML_FILE_NAME);
     asprintf(&bak_name, "%s%s/%s", root_packages_dir_path, info->path, YAML_BACKUP_FILE_NAME);
-    replace_hosted_to_pathed(pubspec_name, bak_name);
+    hosted_to_pathed(pubspec_name, bak_name, restore);
     free(pubspec_name);
     free(bak_name);
   }
   return 0;
 }
 
+// 把 yaml 文件中的 host 在 private pub 的 dependency 转成 pathed，并把修改前的文件保存在 bak_file_name 中
+// 如果 restore 为 true，则表示反向操作
+int hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name, bool restore) {
+  if (access(yaml_file_name, F_OK | R_OK) != 0) {
+    fprintf(stderr, "File %s NOT found or readable!\n", yaml_file_name);
+    exit(EXIT_FAILURE);
+  }
+  if (restore) {
+    if (access(bak_file_name, F_OK | R_OK) != 0) {
+      fprintf(stderr, "Backup file NOT found or readable!\n");
+      return -1;
+    }
+    unlink(yaml_file_name);
+    rename(bak_file_name, yaml_file_name);
+  } else {
+    if (access(bak_file_name, F_OK) == 0) {
+      fprintf(stderr,
+              "Backup file %s found. Restore it if you have done something\n", bak_file_name);
+      return -1;
+    }
+    replace_hosted_to_pathed(yaml_file_name, bak_file_name);
+  }
+  return 0;
+}
 bool prefix(const char *pre, const char *str) { return strncmp(pre, str, strlen(pre)) == 0; }
 
 // 当前行是依赖声明的开始
