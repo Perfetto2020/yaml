@@ -11,4 +11,4 @@ int load_local_dependency_info(char *packages_dir_name, bool restore);
 
 int replace_hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name);
 
-int hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name, bool restore)
+int hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name, bool restore);
