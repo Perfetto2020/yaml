@@ -4,40 +4,23 @@
 #include <unistd.h>
 
 int main(int argc, char **argv) {
-  int aflag = 0;
-  int bflag = 0;
-  char *cvalue = NULL;
-  int index;
-  int c;
+  int *a = calloc(10, sizeof(int));
+  for (int i = 0; i < 10; i++) {
+    a[i] = i + 1;
+  }
 
-  opterr = 0;
-
-  while ((c = getopt(argc, argv, "abc:")) != -1)
-    switch (c) {
-    case 'a':
-      aflag = 1;
-      break;
-    case 'b':
-      bflag = 1;
-      break;
-    case 'c':
-      cvalue = optarg;
-      break;
-    case '?':
-      if (optopt == 'c')
-        fprintf(stderr, "Option -%c requires an argument.\n", optopt);
-      else if (isprint(optopt))
-        fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-      else
-        fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
-      return 1;
-    default:
-      abort();
-    }
-
-  printf("aflag = %d, bflag = %d, cvalue = %s\n", aflag, bflag, cvalue);
-
-  for (index = optind; index < argc; index++)
-    printf("Non-option argument %s\n", argv[index]);
-  return 0;
+  for (int i = 0; i < 10; i++) {
+    printf("%d, ", a[i]);
+  }
+  printf("\n");
+  a = realloc(a, 20 * sizeof(int));
+  for (int i = 0; i < 20; i++) {
+    a[i] += 1;
+  }
+  for (int i = 0; i < 20; i++) {
+    printf("%d, ", a[i]);
+  }
+  printf("\n");
 }
+// 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+// 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

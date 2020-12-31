@@ -1,10 +1,12 @@
-#include "dependencies.h"
 #include <dirent.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include "dependencies.h"
+#include "utils/string_utils.h"
 
 typedef struct {
   char *name;
@@ -14,16 +16,13 @@ typedef struct {
   bool valid;
 } dependency;
 
-int replace_hosted_to_pathed(const char *yaml_file_name, const char *path);
-bool prefix(const char *pre, const char *str);
-
 typedef struct {
   char *name;
   char *path;
   char *version;
 } local_dependency_info;
 
-void remove_spaces(char *s);
+int replace_hosted_to_pathed(const char *yaml_file_name, const char *path);
 
 local_dependency_info *dependencies[32];
 
@@ -34,7 +33,10 @@ static char *root_packages_dir_path;
 
 static bool local_dependency_loaded = false;
 int dependencies_count = 0;
+
+// 保证 local packages 的目录是以 / 结尾的
 void init_root_packages_dir_path(char *origin_root_path);
+
 void print_loaded_local_dependencies();
 
 int replace_all_local_hosted_to_pathed(bool restore);
@@ -76,13 +78,14 @@ int load_local_dependency_info(char *packages_dir_name, bool restore) {
             line_length = strlen(line);
             if (!strncmp(line, YAML_KEY_NAME, strlen(YAML_KEY_NAME))) {
               char *name;
-              asprintf(&name, "%.*s", line_length - key_name_length - 1, line + key_name_length);
+              asprintf(&name, "%.*s", (int)(line_length - key_name_length - 1),
+                       line + key_name_length);
               remove_spaces(name);
               dependencies[count]->name = name;
               name_found = true;
             } else if (!strncmp(line, YAML_KEY_VERSION, strlen(YAML_KEY_VERSION))) {
               char *version;
-              asprintf(&version, "%.*s", line_length - key_version_length - 1,
+              asprintf(&version, "%.*s", (int)(line_length - key_version_length - 1),
                        line + key_version_length);
               remove_spaces(version);
               dependencies[count]->version = version;
@@ -161,15 +164,6 @@ void print_loaded_local_dependencies() {
     info = dependencies[i];
     printf("name: %s:\n  version: %s\n  path: %s\n", info->name, info->version, info->path);
   }
-}
-
-void remove_spaces(char *s) {
-  const char *d = s;
-  do {
-    while (*d == ' ') {
-      ++d;
-    }
-  } while (*s++ = *d++);
 }
 
 /// yaml.c
@@ -292,8 +286,8 @@ int replace_all_local_hosted_to_pathed(bool restore) {
   return 0;
 }
 
-// 把 yaml 文件中的 host 在 private pub 的 dependency 转成 pathed，并把修改前的文件保存在 bak_file_name 中
-// 如果 restore 为 true，则表示反向操作
+// 把 yaml 文件中的 host 在 private pub 的 dependency 转成 pathed，并把修改前的文件保存在
+// bak_file_name 中 如果 restore 为 true，则表示反向操作
 int hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name, bool restore) {
   if (access(yaml_file_name, F_OK | R_OK) != 0) {
     fprintf(stderr, "File %s NOT found or readable!\n", yaml_file_name);
@@ -308,15 +302,14 @@ int hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name, bool
     rename(bak_file_name, yaml_file_name);
   } else {
     if (access(bak_file_name, F_OK) == 0) {
-      fprintf(stderr,
-              "Backup file %s found. Restore it if you have done something\n", bak_file_name);
+      fprintf(stderr, "Backup file %s found. Restore it if you have done something\n",
+              bak_file_name);
       return -1;
     }
     replace_hosted_to_pathed(yaml_file_name, bak_file_name);
   }
   return 0;
 }
-bool prefix(const char *pre, const char *str) { return strncmp(pre, str, strlen(pre)) == 0; }
 
 // 当前行是依赖声明的开始
 bool is_cur_line_dependencies_begin(const char *line) {

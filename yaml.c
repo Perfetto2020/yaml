@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
   char *packages_dir = NULL;
   int c;
 
+  // 参数处理
   while ((c = getopt(argc, argv, "rsp:")) != -1) {
     switch (c) {
     case 'r':
