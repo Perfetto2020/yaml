@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "__locale": "c",
-        "typeinfo": "c"
-    },
-    "C_Cpp.clang_format_fallbackStyle": "{ColumnLimit: 100}"
-}
