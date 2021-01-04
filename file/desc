@@ -1,9 +1,0 @@
-destination file
-source file 1
-Content of source file 1
-
---------- ./src1 appended ----------
-source file 2
-Content of source file 2
-
---------- ./src2 appended ----------
