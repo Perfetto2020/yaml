@@ -235,7 +235,7 @@ int replace_hosted_to_pathed(const char *yaml_file_name, const char *bak_file_na
           free(cur_dependency.properties);
 
         char *dependency_path = full_path_of_dependency(cur_dependency.name);
-        asprintf(&cur_dependency.properties, "%s%s%s", "    path: ", dependency_path, "\n\n");
+        asprintf(&cur_dependency.properties, "    path: %s\n\n", dependency_path);
         free(dependency_path);
       } else {
         // 把当前行 append 到 depency_detail 中

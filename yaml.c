@@ -39,6 +39,12 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Unknown option `-%c'.\n", optopt);
       else
         fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+        fprintf(stdout, "%s can be used to change the dependencies of pubspec.yaml in current directory from hosted on private pub server to pathed, and vice versa.\n", argv[0]);
+        fprintf(stdout, "Usage: %s -p your_packages_path [-rs]\n", argv[0]);
+        fprintf(stdout, "          -p specify path of your local packages, i.e. xxxx/mi_flutter_plugins/packages\n");
+        fprintf(stdout, "          -r restore mode. Restore all the changes made\n");
+        fprintf(stdout, "          -s set mode. Set the path of your local packages.\n"
+                        "             After set, you don't need to sepcify the path of your local packages in following operations\n");
       return 1;
     default:
       fprintf(stderr, "Usage: %s -p your_packages_path [-rs]\n", argv[0]);
