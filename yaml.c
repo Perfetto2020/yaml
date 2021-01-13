@@ -8,6 +8,7 @@
 
 char *read_local_config(char *local_packages_dir, const int length);
 int write_local_config(char *local_packages_dir);
+void print_help_msg(const char *cmd);
 
 int main(int argc, char **argv) {
   bool restore = false;
@@ -18,7 +19,7 @@ int main(int argc, char **argv) {
   int c;
 
   // 参数处理
-  while ((c = getopt(argc, argv, "rsp:")) != -1) {
+  while ((c = getopt(argc, argv, "rsp:h")) != -1) {
     switch (c) {
     case 'r':
       restore = true;
@@ -29,6 +30,9 @@ int main(int argc, char **argv) {
     case 'p':
       packages_dir = optarg;
       break;
+    case 'h':
+      print_help_msg(argv[0]);
+      return 0;
     case '?':
       if (optopt == 'p')
         fprintf(stderr,
@@ -39,12 +43,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Unknown option `-%c'.\n", optopt);
       else
         fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
-        fprintf(stdout, "%s can be used to change the dependencies of pubspec.yaml in current directory from hosted on private pub server to pathed, and vice versa.\n", argv[0]);
-        fprintf(stdout, "Usage: %s -p your_packages_path [-rs]\n", argv[0]);
-        fprintf(stdout, "          -p specify path of your local packages, i.e. xxxx/mi_flutter_plugins/packages\n");
-        fprintf(stdout, "          -r restore mode. Restore all the changes made\n");
-        fprintf(stdout, "          -s set mode. Set the path of your local packages.\n"
-                        "             After set, you don't need to sepcify the path of your local packages in following operations\n");
+      print_help_msg(argv[0]);
       return 1;
     default:
       fprintf(stderr, "Usage: %s -p your_packages_path [-rs]\n", argv[0]);
@@ -65,8 +64,8 @@ int main(int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
   }
-   load_local_dependency_info(packages_dir, restore);
-   return hosted_to_pathed(YAML_FILE_NAME, YAML_BACKUP_FILE_NAME, restore);
+  load_local_dependency_info(packages_dir, restore);
+  return hosted_to_pathed(YAML_FILE_NAME, YAML_BACKUP_FILE_NAME, restore);
 }
 
 char *read_local_config(char *local_packages_dir, const int length) {
@@ -93,4 +92,20 @@ int write_local_config(char *local_packages_dir) {
     fclose(config);
     return result;
   }
+}
+
+void print_help_msg(const char *cmd) {
+  fprintf(stdout,
+          "%s can be used to change the dependencies of pubspec.yaml in current directory from "
+          "hosted on private pub server to pathed, and vice versa.\n",
+          cmd);
+  fprintf(stdout, "Usage: %s -p your_packages_path [-rsh]\n", cmd);
+  fprintf(
+      stdout,
+      "          -p specify path of your local packages, i.e. xxxx/mi_flutter_plugins/packages\n");
+  fprintf(stdout, "          -r restore mode. Restore all the changes made\n");
+  fprintf(stdout, "          -s set mode. Set the path of your local packages.\n"
+                  "             After set, you don't need to sepcify the path of your local "
+                  "packages in following operations\n");
+  fprintf(stdout, "          -h show this help message\n");
 }
