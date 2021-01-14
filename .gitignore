@@ -1,3 +1,5 @@
 *.out
 *.dSYM
 .vscode
+*.o
+build
