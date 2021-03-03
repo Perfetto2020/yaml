@@ -24,7 +24,7 @@ typedef struct {
 
 int replace_hosted_to_pathed(const char *yaml_file_name, const char *path);
 
-local_dependency_info *dependencies[32];
+local_dependency_info *dependencies[48]; // todo: dynamic capacity
 
 /**
  * 存放 packages 的根目录: "/Users/wangpan/Work/Mi/mi_flutter_plugins/packages"
@@ -66,7 +66,12 @@ int load_local_dependency_info(char *packages_dir_name, bool restore) {
 
         char *pubspec_file_path;
         asprintf(&pubspec_file_path, "%s%s/%s", root_packages_dir_path, dir_name, YAML_FILE_NAME);
+        if (DEBUG) {
+          printf("** %d: %s, %s\n", count + 1, root_packages_dir_path, dir_name);
+          printf("## %d: %s\n", count + 1, pubspec_file_path);
+        }
 
+        errno = 0;
         if ((pubspec_yaml = fopen(pubspec_file_path, "r")) != NULL) {
           char line[MAX_LINE_CHAR_COUNT];
           bool name_found = false;
@@ -97,7 +102,8 @@ int load_local_dependency_info(char *packages_dir_name, bool restore) {
           fclose(pubspec_yaml);
           count++;
         } else {
-          fprintf(stderr, "Open %s in %s failed! \n", YAML_FILE_NAME, dir_name);
+          fprintf(stderr, "Open %s in %s failed! \n", pubspec_file_path, dir_name);
+          fprintf(stderr, "    errno = %d, des = %s \n", errno, strerror(errno));
           free(dir_name);
           free(dependencies[count]);
         }
