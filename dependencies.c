@@ -181,7 +181,7 @@ void write_and_clear_dependency(FILE *file, dependency *d);
  *  把 yaml_file_name 中 host 在 private pub server 的 dependency 改成 path 的。
  *  path 的路径：根据每个 dependency 的名字去 load_local_dependency_info 中 load 出来的本地
  *  dependency 信息表中查找。 同时会把修改前的 yaml_file_name 保存到 bak_file_name 中。
- *  
+ *
  *  把 yaml 的文件看成是这样的结构
  *  ^[unknown content]
  *  ^ ...
@@ -196,7 +196,7 @@ void write_and_clear_dependency(FILE *file, dependency *d);
  *  ^ ...
  *  ^[unknown content]
  *  ^ ...
- *  
+ *
  * */
 int replace_hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name) {
   FILE *src;
@@ -230,7 +230,6 @@ int replace_hosted_to_pathed(const char *yaml_file_name, const char *bak_file_na
     }
 
     if (!is_cur_line_in_dependencies || is_cur_line_dependencies_begin(line)) {
-      printf("#### in=%s, %s", is_cur_line_in_dependencies ? "true" : "false", line);
       // dependencies 结束了，把最后一个 dependency 写入 dest
       write_and_clear_dependency(dest, &cur_dependency);
 
@@ -344,7 +343,8 @@ bool is_cur_line_dependencies_begin(const char *line) {
 
 // 当前行是一个新的 dependency 声明的开始，例如："flutter_icons:"
 bool is_cur_line_unknown_content_begin(const char *line) {
-  return !prefix(" ", line) && !prefix("\n", line) && !prefix("#", line) && !is_cur_line_dependencies_begin(line);
+  return !prefix(" ", line) && !prefix("\n", line) && !prefix("#", line) &&
+         !is_cur_line_dependencies_begin(line);
 }
 
 void write_and_clear_dependency(FILE *file, dependency *d) {
