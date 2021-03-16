@@ -174,13 +174,29 @@ void print_loaded_local_dependencies() {
 
 /// yaml.c
 bool is_cur_line_dependencies_begin(const char *line);
-bool is_cur_line_other_begin(const char *line);
+bool is_cur_line_unknown_content_begin(const char *line);
 void write_and_clear_dependency(FILE *file, dependency *d);
 
 /**
  *  把 yaml_file_name 中 host 在 private pub server 的 dependency 改成 path 的。
  *  path 的路径：根据每个 dependency 的名字去 load_local_dependency_info 中 load 出来的本地
- * dependency 信息表中查找。 同时会把修改前的 yaml_file_name 保存到 bak_file_name 中。
+ *  dependency 信息表中查找。 同时会把修改前的 yaml_file_name 保存到 bak_file_name 中。
+ *  
+ *  把 yaml 的文件看成是这样的结构
+ *  ^[unknown content]
+ *  ^ ...
+ *  ^dependencies:
+ *  ^  [dependency block]
+ *  ^ ...
+ *  ^dependency_overrides:
+ *  ^  [dependency block]
+ *  ^ ...
+ *  ^dev_dependencies:
+ *  ^  [dependency block]
+ *  ^ ...
+ *  ^[unknown content]
+ *  ^ ...
+ *  
  * */
 int replace_hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name) {
   FILE *src;
@@ -198,7 +214,8 @@ int replace_hosted_to_pathed(const char *yaml_file_name, const char *bak_file_na
 
   char line[MAX_LINE_CHAR_COUNT];
 
-  bool is_cur_line_in_dependency = false; // 当前处理的行是不是 dependency 中的一行
+  // 当前处理的行是否是 [dependency block] 中的一行
+  bool is_cur_line_in_dependencies = false;
 
   dependency cur_dependency = {NULL, NULL, 0, false, false};
 
@@ -206,13 +223,14 @@ int replace_hosted_to_pathed(const char *yaml_file_name, const char *bak_file_na
 
     size_t line_length = strlen(line);
 
-    if (is_cur_line_in_dependency) {
-      is_cur_line_in_dependency = !is_cur_line_other_begin(line);
+    if (is_cur_line_in_dependencies) {
+      is_cur_line_in_dependencies = !is_cur_line_unknown_content_begin(line);
     } else {
-      is_cur_line_in_dependency = is_cur_line_dependencies_begin(line);
+      is_cur_line_in_dependencies = is_cur_line_dependencies_begin(line);
     }
 
-    if (!is_cur_line_in_dependency || is_cur_line_dependencies_begin(line)) {
+    if (!is_cur_line_in_dependencies || is_cur_line_dependencies_begin(line)) {
+      printf("#### in=%s, %s", is_cur_line_in_dependencies ? "true" : "false", line);
       // dependencies 结束了，把最后一个 dependency 写入 dest
       write_and_clear_dependency(dest, &cur_dependency);
 
@@ -318,14 +336,15 @@ int hosted_to_pathed(const char *yaml_file_name, const char *bak_file_name, bool
 }
 
 // 当前行是依赖声明的开始
+// 即当前行是这三种之一：dependencies:\n 或 dev_dependencies:\n 或 dependency_overrides:\n
 bool is_cur_line_dependencies_begin(const char *line) {
   return !strcmp(line, "dependencies:\n") || !strcmp(line, "dev_dependencies:\n") ||
          !strcmp(line, "dependency_overrides:\n");
 }
 
-// 当前行是其他声明的开始，例如："flutter_icons:"
-bool is_cur_line_other_begin(const char *line) {
-  return !prefix(" ", line) && !prefix("\n", line) && !is_cur_line_dependencies_begin(line);
+// 当前行是一个新的 dependency 声明的开始，例如："flutter_icons:"
+bool is_cur_line_unknown_content_begin(const char *line) {
+  return !prefix(" ", line) && !prefix("\n", line) && !prefix("#", line) && !is_cur_line_dependencies_begin(line);
 }
 
 void write_and_clear_dependency(FILE *file, dependency *d) {
